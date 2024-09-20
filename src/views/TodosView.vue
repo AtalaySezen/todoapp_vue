@@ -17,14 +17,17 @@ watch(
 );
 
 const todoCompleted = computed(() => {
-  return todoList.value.every((todo) => todo.isCompleted);
+  return todoList.value.filter(todo => todo.isCompleted);
 });
 
 const getTodoListFromLocalStorage = () => {
-  const getTodos = JSON.parse(localStorage.getItem("todos"));
-
-  if (getTodos) {
-    todoList.value = getTodos;
+  try {
+    const getTodos = JSON.parse(localStorage.getItem("todos"));
+    if (getTodos) {
+      todoList.value = getTodos;
+    }
+  } catch (error) {
+    console.error("Error loading todos from localStorage:", error);
   }
 };
 
@@ -35,11 +38,12 @@ const saveTodoListLocalStorage = () => {
 };
 
 const createTodo = (todo) => {
+  if (!todo.trim()) return; 
   todoList.value.push({
     id: uid(),
     todo,
-    isCompleted: null,
-    isEditing: null,
+    isCompleted: false,
+    isEditing: false,
   });
 };
 
